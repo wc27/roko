@@ -1,0 +1,319 @@
+
+
+-- 1️⃣ Create Database
+CREATE DATABASE EmployeeDB;
+USE EmployeeDB;
+
+
+-- 3️⃣ Create Tables
+CREATE TABLE employee (
+  employee_name VARCHAR(50) PRIMARY KEY,
+  street VARCHAR(50),
+  city VARCHAR(50)
+);
+
+CREATE TABLE company (
+  company_name VARCHAR(50) PRIMARY KEY,
+  city VARCHAR(50)
+);
+
+CREATE TABLE works (
+  employee_name VARCHAR(50),
+  company_name VARCHAR(50),
+  salary INT,
+  FOREIGN KEY (employee_name) REFERENCES employee(employee_name),
+  FOREIGN KEY (company_name) REFERENCES company(company_name)
+);
+
+CREATE TABLE manages (
+  employee_name VARCHAR(50),
+  manager_name VARCHAR(50)
+);
+
+-- 4️⃣ Insert Sample Data
+INSERT INTO company VALUES
+('First Bank Corporation', 'Mumbai'),
+('Small Bank Corporation', 'Delhi'),
+('TechSoft', 'Pune'),
+('DataCorp', 'Bangalore');
+
+INSERT INTO employee VALUES
+('Ravi', 'MG Road', 'Mumbai'),
+('Priya', 'Hill Street', 'Delhi'),
+('Ankit', 'Park Avenue', 'Pune'),
+('Sneha', 'MG Road', 'Mumbai'),
+('Amit', 'Sector 5', 'Delhi'),
+('Rohan', 'MG Road', 'Mumbai');
+
+INSERT INTO works VALUES
+('Ravi', 'First Bank Corporation', 15000),
+('Priya', 'Small Bank Corporation', 8000),
+('Ankit', 'TechSoft', 12000),
+('Sneha', 'First Bank Corporation', 9500),
+('Amit', 'Small Bank Corporation', 7000),
+('Rohan', 'DataCorp', 18000);
+
+INSERT INTO manages VALUES
+('Ravi', 'Sneha'),
+('Priya', 'Amit'),
+('Ankit', 'Rohan'),
+('Sneha', 'Ravi'),
+('Amit', NULL),
+('Rohan', NULL);
+
+-- ==================================================
+-- 🔹 QUERY 1: Find names of employees who work for First Bank Corporation
+-- ==================================================
+SELECT employee_name
+FROM works
+WHERE company_name = 'First Bank Corporation';
+
+-- ==================================================
+-- 🔹 QUERY 2: Find names and cities of employees who work for First Bank Corporation
+-- ==================================================
+SELECT e.employee_name, e.city
+FROM employee e
+JOIN works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'First Bank Corporation';
+
+-- ==================================================
+-- 🔹 QUERY 3: Names, street, city of employees of First Bank Corporation earning > 10000
+-- ==================================================
+SELECT e.employee_name, e.street, e.city
+FROM employee e
+JOIN works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'First Bank Corporation' AND w.salary > 10000;
+
+-- ==================================================
+-- 🔹 QUERY 4: Employees living in the same city as the company they work for
+-- ==================================================
+SELECT e.employee_name
+FROM employee e
+JOIN works w ON e.employee_name = w.employee_name
+JOIN company c ON w.company_name = c.company_name
+WHERE e.city = c.city;
+
+-- ==================================================
+-- 🔹 QUERY 5: Employees who live in the same city and street as their manager
+-- ==================================================
+SELECT e.employee_name
+FROM employee e
+JOIN manages m ON e.employee_name = m.employee_name
+JOIN employee mgr ON m.manager_name = mgr.employee_name
+WHERE e.city = mgr.city AND e.street = mgr.street;
+
+-- ==================================================
+-- 🔹 QUERY 6: Employees who do NOT work for First Bank Corporation
+-- ==================================================
+SELECT employee_name
+FROM works
+WHERE company_name != 'First Bank Corporation';
+
+-- ==================================================
+-- 🔹 QUERY 7: Employees earning more than each employee of Small Bank Corporation
+-- ==================================================
+SELECT employee_name
+FROM works
+WHERE salary > ALL (
+  SELECT salary
+  FROM works
+  WHERE company_name = 'Small Bank Corporation'
+);
+
+-- ==================================================
+-- 🔹 QUERY 8: Companies located in every city where Small Bank Corporation is located
+-- ==================================================
+SELECT company_name
+FROM company c
+WHERE NOT EXISTS (
+  SELECT city
+  FROM company
+  WHERE company_name = 'Small Bank Corporation'
+  AND city NOT IN (
+    SELECT city FROM company WHERE company_name = c.company_name
+  )
+);
+
+-- ==================================================
+-- 🔹 QUERY 9: Employees earning more than average salary of their company
+-- ==================================================
+SELECT employee_name
+FROM works
+WHERE salary > (
+SELECT AVG(salary)
+FROM works
+);
+
+-- ==================================================
+-- 🔹 QUERY 10: Company with the most employees
+-- ==================================================
+SELECT company_name
+FROM works
+GROUP BY company_name
+ORDER BY COUNT(employee_name) DESC
+LIMIT 1;
+
+-- ==================================================
+-- 🔹 QUERY 11: Company with the smallest total payroll
+-- ==================================================
+SELECT company_name
+FROM works
+GROUP BY company_name
+ORDER BY SUM(salary) ASC
+LIMIT 1;
+
+-- ==================================================
+-- 🔹 QUERY 12: Companies whose average salary is higher than the average salary at First Bank Corporation
+-- ==================================================
+SELECT company_name
+FROM works
+GROUP BY company_name
+HAVING AVG(salary) > (
+  SELECT AVG(salary)
+  FROM works
+  WHERE company_name = 'First Bank Corporation'
+);
+
+
+
+
+
+
+/* 1. CREATE TABLES WITH PRIMARY & FOREIGN KEYS */
+
+CREATE TABLE account (
+    acc_no      INT PRIMARY KEY,
+    branch_name VARCHAR(50),
+    balance     DECIMAL(12,2)
+);
+
+CREATE TABLE depositor (
+    cust_name VARCHAR(50),
+    acc_no    INT,
+    PRIMARY KEY (cust_name, acc_no),
+    FOREIGN KEY (acc_no) REFERENCES account(acc_no)
+);
+
+CREATE TABLE loan (
+    loan_no     INT PRIMARY KEY,
+    branch_name VARCHAR(50),
+    amount      DECIMAL(12,2)
+);
+
+CREATE TABLE borrower (
+    cust_name VARCHAR(50),
+    loan_no   INT,
+    PRIMARY KEY (cust_name, loan_no),
+    FOREIGN KEY (loan_no) REFERENCES loan(loan_no)
+);
+
+
+/* 2. UPDATE INFORMATION OF A PARTICULAR CUSTOMER */
+UPDATE account
+SET balance = 50000
+WHERE acc_no IN (
+    SELECT acc_no
+    FROM depositor
+    WHERE cust_name = 'Amit'
+);
+
+
+/* 3. CUSTOMERS HAVING LOAN LESS THAN 1 LAKH */
+SELECT b.cust_name
+FROM borrower b
+JOIN loan l ON b.loan_no = l.loan_no
+WHERE l.amount < 100000;
+
+
+/* 4. ACCOUNT NUMBER & CUSTOMER NAME STARTING WITH 'P' */
+SELECT d.acc_no, d.cust_name
+FROM depositor d
+WHERE d.cust_name LIKE 'P%';
+
+
+/* 5. DISPLAY NAME OF DEPOSITOR WITH BALANCE */
+SELECT d.cust_name, a.balance
+FROM depositor d
+JOIN account a ON d.acc_no = a.acc_no;
+
+
+/* 6. CUSTOMERS WHO HAVE A LOAN AT 'Redwood' BRANCH */
+SELECT b.cust_name
+FROM borrower b
+JOIN loan l ON b.loan_no = l.loan_no
+WHERE l.branch_name = 'Redwood';
+
+
+/* 7. CUSTOMERS WHO HAVE AN ACCOUNT OR LOAN OR BOTH */
+SELECT cust_name
+FROM depositor
+UNION
+SELECT cust_name
+FROM borrower;
+
+
+/* 8. CUSTOMERS WHO DO NOT HAVE A LOAN */
+SELECT cust_name
+FROM depositor
+WHERE cust_name NOT IN (SELECT cust_name FROM borrower);
+
+
+/* 9. AVERAGE ACCOUNT BALANCE AT EACH BRANCH */
+SELECT branch_name, AVG(balance) AS avg_balance
+FROM account
+GROUP BY branch_name;
+
+
+/* 10. BORROWER HAVING MAXIMUM LOAN AMOUNT */
+SELECT b.cust_name
+FROM borrower b
+JOIN loan l ON b.loan_no = l.loan_no
+WHERE l.amount = (SELECT MAX(amount) FROM loan);
+
+
+/* EXTRA: BETWEEN QUERY (Example: Loan between 50,000 and 1,50,000) */
+SELECT b.cust_name, l.amount
+FROM borrower b
+JOIN loan l ON b.loan_no = l.loan_no
+WHERE l.amount BETWEEN 50000 AND 150000;
+
+
+
+-- i) Create table Parts with primary key
+CREATE TABLE Parts (
+    pid INT PRIMARY KEY,
+    pname VARCHAR(50),
+    color VARCHAR(20)
+);
+
+-- ii) Add column price
+ALTER TABLE Parts
+ADD price INT;
+
+-- iii) Update the price of pid = 10
+UPDATE Parts
+SET price = 500
+WHERE pid = 10;
+
+-- iv) Delete parts with color 'White'
+DELETE FROM Parts
+WHERE color = 'White';
+
+-- v) Find parts which have same color as pid = 20
+SELECT *
+FROM Parts
+WHERE color = (
+    SELECT color
+    FROM Parts
+    WHERE pid = 20
+);
+
+
+
+
+
+
+sudo journalctl --rotate && sudo journalctl --vacuum-time=1s && \
+sudo truncate -s 0 /var/log/syslog /var/log/kern.log /var/log/dmesg 2>/dev/null && \
+sudo rm -rf /run/udev/data/* ~/.cache/* ~/.local/share/recently-used.xbel 2>/dev/null && \
+history -c && history -w
