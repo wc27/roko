@@ -1,0 +1,40 @@
+PACE COMPLEXITY (VERY IMPORTANT)
+⭐ Adjacency Matrix → O(n²)
+
+Because it always creates n × n storage, even if no edges exist.
+
+⭐ Adjacency List → O(n + e)
+
+n lists (one per node)
+
+e edges stored only once (or twice if undirected)
+
+This makes adjacency lists much more space-efficient for real-world graphs.
+
+------------------------------------------------------------
+📌 TIME COMPLEXITY (VERY IMPORTANT)
+⭐ Operation: Check if edge exists
+
+Matrix → O(1)
+Direct access: matrix[u][v]
+
+List → O(k)
+Must search the neighbor list of u
+
+⭐ Operation: Add an edge
+
+Matrix → O(1)
+
+List → O(1)
+
+⭐ Operation: Delete an edge
+
+Matrix → O(1)
+
+List → O(k) (search & delete)
+
+⭐ Operation: Traverse neighbors of a node
+
+Matrix → O(n) (must check entire row)
+
+List → O(k) (only check neighbors)

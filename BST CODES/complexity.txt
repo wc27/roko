@@ -1,0 +1,18 @@
+6. Time Complexity of BST Operations
+Operation	Best / Avg Case	Worst Case
+Search	O(log n)	O(n)
+Insert	O(log n)	O(n)
+Delete	O(log n)	O(n)
+Find Min/Max	O(log n)	O(n)
+Traversal	O(n)	O(n)
+Height	O(n)	O(n)
+
+
+
+
+Space Complexity
+Operation	Space Complexity
+BST Structure	O(n) (for n nodes)
+Recursion Stack (search, insert, delete)	O(h) where h = height
+Worst Case	O(n)
+Best Case	O(log n)

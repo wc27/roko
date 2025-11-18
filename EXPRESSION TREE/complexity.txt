@@ -1,0 +1,30 @@
+Time & Space Complexities
+✔ Construction from Prefix/Postfix
+
+Time: O(n) (each character processed once)
+
+Space: O(n) (stack used + nodes stored)
+
+✔ Traversals (Inorder, Preorder, Postorder)
+
+Time: O(n) — visit every node once
+
+Space:
+
+Recursive: O(h) (height of tree)
+
+Non-recursive: O(n) (worst case)
+
+✔ Evaluate Expression Tree
+
+If operands are numbers:
+
+Time: O(n)
+
+Space: O(h)
+
+✔ Mirroring (swapping left & right)
+
+Time: O(n)
+
+Space: O(h)

@@ -1,0 +1,27 @@
+Time Complexity (0/1 Knapsack)
+
+DP table has:
+
+n rows (number of items)
+
+W columns (knapsack capacity)
+
+Thus:
+
+Time Complexity = O(n × W)
+
+
+This is pseudo-polynomial time, because it depends on both n and W.
+
+✅ Space Complexity (0/1 Knapsack)
+
+The DP table stores n × W values.
+
+So:
+
+Space Complexity = O(n × W)
+
+
+However, if optimized using a 1D DP array:
+
+Space Complexity reduces to O(W)

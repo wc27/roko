@@ -1,0 +1,37 @@
+Time Complexity (Fractional Knapsack)
+Step 1: Sort items by value/weight ratio
+
+Sorting takes:
+
+O(n log n)
+
+Step 2: Loop through sorted items and fill knapsack
+
+This takes:
+
+O(n)
+
+Final Time Complexity:
+O(n log n)
+
+
+(Sorting dominates the complexity)
+
+✅ Space Complexity (Fractional Knapsack)
+
+We only store:
+
+list of items
+
+temporary variables
+
+No dynamic programming table.
+
+So:
+
+O(1)   or O(n) if sorting requires a copy of the array
+
+
+Most commonly accepted answer:
+
+Space Complexity = O(1)
